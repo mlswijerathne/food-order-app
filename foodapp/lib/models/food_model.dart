@@ -4,7 +4,7 @@ class FoodModel {
   final String description;
   final double price;
   final String foodPicture;
-  
+
   FoodModel({
     required this.id,
     required this.name,
@@ -25,11 +25,11 @@ class FoodModel {
 
   factory FoodModel.fromMap(Map<String, dynamic> map) {
     return FoodModel(
-      id: map['id'],
-      name: map['name'],
-      description: map['description'],
-      price: map['price'].toDouble(),
-      foodPicture: map['foodPicture'],
+      id: map['id'] ?? '', // Provide default value if null
+      name: map['name'] ?? 'Unknown',
+      description: map['description'] ?? 'No description available',
+      price: (map['price'] ?? 0).toDouble(), // Convert to double safely
+      foodPicture: map['foodPicture'] ?? '', // Prevent null images
     );
   }
 }

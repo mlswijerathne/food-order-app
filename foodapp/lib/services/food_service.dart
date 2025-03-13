@@ -7,42 +7,48 @@ class FoodService {
 
   // Add a new food item
   Future<String?> addFood(Map<String, dynamic> foodMap) async {
-    try {
-      // Debug: Print the foodMap to verify its contents
-      debugPrint("Sending to Firestore: $foodMap");
-
-      // Add the document to Firestore
-      DocumentReference docRef = await _firestore.collection('foods').add(foodMap);
-
-      // Update the document with the generated ID
-      await docRef.update({'id': docRef.id});
-
-      // Debug: Print the generated ID
-      debugPrint("Food added successfully with ID: ${docRef.id}");
-
-      return docRef.id;
-    } on FirebaseException catch (e) {
-      debugPrint("Firebase Error: ${e.message}");
-      return null;
-    } catch (e) {
-      debugPrint("Unexpected Error: ${e.toString()}");
+  try {
+    // Check for required fields
+    debugPrint("Food map before adding: $foodMap");
+    
+    // Make sure all required fields are present
+    if (!foodMap.containsKey('name') || !foodMap.containsKey('description')) {
+      debugPrint("Missing required fields in food map");
       return null;
     }
+    
+    DocumentReference docRef = await _firestore.collection('foods').add(foodMap);
+    await docRef.update({'id': docRef.id});
+    
+    // Verify the document was added correctly
+    DocumentSnapshot addedDoc = await docRef.get();
+    debugPrint("Added document data: ${addedDoc.data()}");
+    
+    return docRef.id;
+  } catch (e) {
+    debugPrint("Error adding food: ${e.toString()}");
+    return null;
   }
+}
 
   // Get all food items
   Future<List<FoodModel>> getAllFoods() async {
-    try {
-      QuerySnapshot snapshot = await _firestore.collection('foods').get();
-      return snapshot.docs.map((doc) {
-        Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
-        return FoodModel.fromMap(data);
-      }).toList();
-    } catch (e) {
-      debugPrint("Error getting foods: ${e.toString()}");
-      return [];
-    }
+  try {
+    QuerySnapshot snapshot = await _firestore.collection('foods').get();
+    
+    debugPrint("Fetched ${snapshot.docs.length} food items"); // Debugging
+    
+    return snapshot.docs.map((doc) {
+      Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+      debugPrint("Food Item: $data"); // Check if data exists
+      return FoodModel.fromMap(data);
+    }).toList();
+  } catch (e) {
+    debugPrint("Error getting foods: ${e.toString()}");
+    return [];
   }
+}
+
 
   // Get a specific food item
   Future<FoodModel?> getFoodById(String foodId) async {

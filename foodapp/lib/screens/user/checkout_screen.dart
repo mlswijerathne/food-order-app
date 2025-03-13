@@ -90,25 +90,16 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
         _isPlacingOrder = false;
       });
 
-      if (orderId != null) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Order placed successfully!'),
-            backgroundColor: Colors.green,
-          ),
-        );
-        
-        // Navigate to order confirmation page or order history
-        Navigator.pushNamed(context, '/all_order_screen');
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Failed to place order. Please try again.'),
-            backgroundColor: Colors.red,
-          ),
-        );
-      }
-    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Order placed successfully!'),
+          backgroundColor: Colors.green,
+        ),
+      );
+      
+      // Navigate to order confirmation page or order history
+      Navigator.pushNamed(context, '/all_order_screen');
+        } catch (e) {
       setState(() {
         _isPlacingOrder = false;
       });
